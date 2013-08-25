@@ -59,6 +59,15 @@ public:
     }
   };
 
+  class IsReflectiveVariable : public Builtin<IsReflectiveVariable> {
+  public:
+    IsReflectiveVariable(): Builtin("isReflectiveVariable") {}
+
+    static void call(VM vm, In variable, Out result) {
+      result = build(vm, variable.is<ReflectiveVariable>());
+    }
+  };
+
   class BindReflectiveVariable: public Builtin<BindReflectiveVariable> {
   public:
     BindReflectiveVariable(): Builtin("bindReflectiveVariable") {}
@@ -99,6 +108,19 @@ public:
         entity.become(vm, value);
       } else {
         raiseTypeError(vm, "Token or Variable entity", entity);
+      }
+    }
+  };
+
+  class BecomeExchange: public Builtin<BecomeExchange> {
+  public:
+    BecomeExchange(): Builtin("becomeExchange") {}
+
+    static void call(VM vm, In entity, In value, Out originalEntity) {
+      if (entity.type().getStructuralBehavior() == sbTokenEq) {
+        originalEntity = entity.becomeExchange(vm, value);
+      } else {
+        raiseTypeError(vm, "Token", entity);
       }
     }
   };
